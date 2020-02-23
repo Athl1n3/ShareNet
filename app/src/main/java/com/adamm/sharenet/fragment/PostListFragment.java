@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +26,7 @@ public abstract class PostListFragment extends Fragment {
 
     private AppDatabase mDatabase;
 
-    private RecyclerView.Adapter mAdapter;
+    public PostAdapter mAdapter;
     private RecyclerView mRecycler;
     private LinearLayoutManager mManager;
 
@@ -53,8 +55,15 @@ public abstract class PostListFragment extends Fragment {
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
+        LiveData<List<Post>> livePosts = getQuery(mDatabase);
+        livePosts.observe(this, new Observer<List<Post>>() {
+            @Override
+            public void onChanged(List<Post> posts) {
+                mAdapter.setData(posts);
+            }
 
-        List<Post> posts = getQuery(mDatabase);
+        });
+        List<Post> posts = livePosts.getValue();
         mAdapter = new PostAdapter(posts);//Posts query list result
         mRecycler.setAdapter(mAdapter);
     }
@@ -84,7 +93,14 @@ public abstract class PostListFragment extends Fragment {
 
         @Override
         public int getItemCount() {
+            if(mPosts == null)
+                return 0;
             return mPosts.size();
+        }
+
+        public void setData(List<Post> newPosts){
+            mPosts = newPosts;
+            notifyDataSetChanged();
         }
     }
 
@@ -113,5 +129,5 @@ public abstract class PostListFragment extends Fragment {
             bodyView.setText(post.body);
         }
     }
-    public abstract List<Post> getQuery(AppDatabase databaseReference);
+    public abstract LiveData<List<Post>> getQuery(AppDatabase databaseReference);
 }

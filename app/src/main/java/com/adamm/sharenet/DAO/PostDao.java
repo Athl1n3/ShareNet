@@ -1,5 +1,6 @@
 package com.adamm.sharenet.DAO;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -13,10 +14,10 @@ import java.util.List;
 @Dao
 public interface PostDao {
     @Query("SELECT * FROM posts")
-    List<Post> getPosts();
+    LiveData<List<Post>> getPosts();
 
     @Query("SELECT * FROM posts WHERE uid LIKE :myUID")
-    List<Post> getMyPosts(int myUID);
+    LiveData<List<Post>> getMyPosts(int myUID);
 
     @Insert
     void addPost(Post post);

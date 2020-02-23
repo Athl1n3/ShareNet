@@ -1,5 +1,7 @@
 package com.adamm.sharenet.fragment;
 
+import androidx.lifecycle.LiveData;
+
 import com.adamm.sharenet.Database.AppDatabase;
 import com.adamm.sharenet.entities.Post;
 
@@ -10,7 +12,7 @@ public class PostsFragment extends PostListFragment {
     public PostsFragment() {}
 
     @Override
-    public List<Post> getQuery(AppDatabase mDatabase) {
+    public LiveData<List<Post>> getQuery(AppDatabase mDatabase) {
         return mDatabase.postDao().getPosts();
     }
 }
