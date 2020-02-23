@@ -1,19 +1,16 @@
 package com.adamm.sharenet.fragment;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
+import com.adamm.sharenet.Database.AppDatabase;
+import com.adamm.sharenet.entities.Post;
+
+import java.util.List;
 
 public class PostsFragment extends PostListFragment {
 
     public PostsFragment() {}
 
     @Override
-    public Query getQuery(DatabaseReference databaseReference) {
-        // Last 100 posts, these are automatically the 100 most recent
-        // due to sorting by push() keys
-        Query recentPostsQuery = databaseReference.child("posts")
-                .limitToFirst(100);
-
-        return recentPostsQuery;
+    public List<Post> getQuery(AppDatabase mDatabase) {
+        return mDatabase.postDao().getPosts();
     }
 }

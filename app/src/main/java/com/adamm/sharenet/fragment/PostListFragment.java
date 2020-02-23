@@ -18,6 +18,8 @@ import com.adamm.sharenet.PostDetailActivity;
 import com.adamm.sharenet.R;
 import com.adamm.sharenet.entities.Post;
 
+import java.util.List;
+
 
 public abstract class PostListFragment extends Fragment {
 
@@ -50,47 +52,42 @@ public abstract class PostListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         // Set up Layout Manager, reverse layout
-        mManager = new LinearLayoutManager(getActivity());
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
-        mRecycler.setLayoutManager(mManager);
+        mRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // Set up FirebaseRecyclerAdapter with the Query
-        //Query postsQuery = getQuery(mDatabase);
-
-        mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(options) {
-
-            @Override
-            public PostViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-                LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                return new PostViewHolder(inflater.inflate(R.layout.item_post, viewGroup, false));//Create a PostViewHolder for each post row
-            }
-
-            @Override
-            protected void onBindViewHolder(PostViewHolder viewHolder, int position, final Post post) {
-                final DatabaseReference postRef = getRef(position);
-                // Set click listener for the whole post view
-                final String postKey = postRef.getKey();
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Launch PostDetailActivity
-                        Intent intent = new Intent(getActivity(), PostDetailActivity.class);
-                        intent.putExtra(PostDetailActivity.EXTRA_POST_KEY, postKey);
-                        startActivity(intent);
-                    }
-                });
-
-                // Determine if the current user has liked this post and set UI accordingly
-                if (post.stars.containsKey(getUid())) {
-                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_24);
-                } else {
-                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_outline_24);
-                }
-                viewHolder.bindToPost(post, postRef);// Bind Post to ViewHolder
-            }
-        };
+        List<Post> posts = getQuery(mDatabase);
+        mAdapter = new PostAdapter(posts);//Posts query list result
         mRecycler.setAdapter(mAdapter);
+    }
+
+    private class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
+        private List<Post> mPosts;
+
+        public List<Post> getmPosts() {
+            return mPosts;
+        }
+
+        public PostAdapter(List<Post> posts) {
+            mPosts = posts;
+        }
+
+        @Override
+        public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {// This is called by RecyclerView whenever it needs a new holder
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            return new PostViewHolder(inflater, parent);//Create a PostViewHolder for each post row
+        }
+
+        @Override
+        public void onBindViewHolder(PostViewHolder holder, int position) {//Get list node via ID to view
+            Post post = mPosts.get(position);
+            holder.bindToPost(post);// Bind Post to ViewHolder
+        }
+
+        @Override
+        public int getItemCount() {
+            return mPosts.size();
+        }
     }
 
     public class PostViewHolder extends RecyclerView.ViewHolder {
@@ -101,9 +98,8 @@ public abstract class PostListFragment extends Fragment {
         public TextView numStarsView;
         public TextView bodyView;
 
-        public PostViewHolder(View itemView) {
-            super(itemView);
-
+        public PostViewHolder(LayoutInflater inflater, ViewGroup parent) {
+            super(inflater.inflate(R.layout.item_post, parent, false));
             titleView = itemView.findViewById(R.id.postTitle);
             authorView = itemView.findViewById(R.id.postAuthor);
             starView = itemView.findViewById(R.id.star);
@@ -111,85 +107,13 @@ public abstract class PostListFragment extends Fragment {
             bodyView = itemView.findViewById(R.id.postBody);
         }
 
-        public void bindToPost(Post post, DatabaseReference postRef) {
+        public void bindToPost(Post post) {
             final Post posta = post;
-            final DatabaseReference postRefa = postRef;
             titleView.setText(post.title);
             authorView.setText(post.author);
             numStarsView.setText(String.valueOf(post.starCount));
             bodyView.setText(post.body);
-
-            //Setting onClickListener for star button
-            starView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View starView) {
-                    // Need to write to both places the post is stored
-                    DatabaseReference globalPostRef = mDatabase.child("posts").child(postRefa.getKey());
-                    DatabaseReference userPostRef = mDatabase.child("user-posts").child(posta.uid).child(postRefa.getKey());
-
-                    // Run two transactions
-                    onStarClicked(globalPostRef);
-                    onStarClicked(userPostRef);
-                }
-            });
         }
     }
-
-
-    //Should we remove??
-    private void onStarClicked(DatabaseReference postRef) {
-        postRef.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Post p = mutableData.getValue(Post.class);
-                if (p == null) {
-                    return Transaction.success(mutableData);
-                }
-
-                if (p.stars.containsKey(getUid())) {
-                    // Unstar the post and remove self from stars
-                    p.starCount = p.starCount - 1;
-                    p.stars.remove(getUid());
-                } else {
-                    // Star the post and add self to stars
-                    p.starCount = p.starCount + 1;
-                    p.stars.put(getUid(), true);
-                }
-
-                // Set value and report transaction success
-                mutableData.setValue(p);
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b,
-                                   DataSnapshot dataSnapshot) {
-                // Transaction completed
-                Log.d(TAG, "postTransaction:onComplete:" + databaseError);
-            }
-        });
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (mAdapter != null) {
-            mAdapter.startListening();
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAdapter != null) {
-            mAdapter.stopListening();
-        }
-    }
-
-    public String getUid() {
-        return FirebaseAuth.getInstance().getCurrentUser().getUid();
-    }
-
-    public abstract Query getQuery(DatabaseReference databaseReference);
+    public abstract List<Post> getQuery(AppDatabase databaseReference);
 }

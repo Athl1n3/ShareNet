@@ -1,16 +1,16 @@
 package com.adamm.sharenet.fragment;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
+import com.adamm.sharenet.Database.AppDatabase;
+import com.adamm.sharenet.entities.Post;
+
+import java.util.List;
 
 public class MyPostsFragment extends PostListFragment {
 
     public MyPostsFragment() {}
 //QUERY FOR POSTS HERE
     @Override
-    public Query getQuery(DatabaseReference databaseReference) {
-        // All my posts
-        return databaseReference.child("user-posts")
-                .child(getUid());
+    public List<Post> getQuery(AppDatabase mDatabase) {
+        return mDatabase.postDao().getMyPosts(AppDatabase.curr_user.uid);
     }
 }

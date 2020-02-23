@@ -16,7 +16,7 @@ public interface PostDao {
     List<Post> getPosts();
 
     @Query("SELECT * FROM posts WHERE uid LIKE :myUID")
-    List<Post> getMyPosts(String myUID);
+    List<Post> getMyPosts(int myUID);
 
     @Insert
     void addPost(Post post);
