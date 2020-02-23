@@ -1,8 +1,6 @@
 package com.adamm.sharenet.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adamm.sharenet.Database.AppDatabase;
-import com.adamm.sharenet.PostDetailActivity;
 import com.adamm.sharenet.R;
 import com.adamm.sharenet.entities.Post;
 
@@ -52,9 +49,10 @@ public abstract class PostListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         // Set up Layout Manager, reverse layout
+        mManager = new LinearLayoutManager(getActivity());
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
-        mRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecycler.setLayoutManager(mManager);
 
         List<Post> posts = getQuery(mDatabase);
         mAdapter = new PostAdapter(posts);//Posts query list result

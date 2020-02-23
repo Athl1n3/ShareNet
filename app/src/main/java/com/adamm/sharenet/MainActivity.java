@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
                     new MyPostsFragment(),
             };
             private final String[] mFragmentNames = new String[] {//Tabs names array
-                    getString(R.string.heading_recent),
+                    getString(R.string.heading_posts),
                     getString(R.string.heading_my_posts),
             };
             @Override

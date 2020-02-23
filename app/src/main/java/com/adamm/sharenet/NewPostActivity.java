@@ -57,7 +57,6 @@ public class NewPostActivity extends AppCompatActivity {
         final String body = mBodyField.getText().toString();
 
         User user = AppDatabase.curr_user;
-        Post post = new Post(String.valueOf(user.uid),user.username,title,body);
 
         // Title is required
         if (TextUtils.isEmpty(title)) {
@@ -71,16 +70,13 @@ public class NewPostActivity extends AppCompatActivity {
             return;
         }
 
+        Post post = new Post(String.valueOf(user.uid),user.username,title,body);
         // Disable button so there are no multi-posts
         setEditingEnabled(false);
         Toast.makeText(this, "Posting...", Toast.LENGTH_SHORT).show();
 
-        // [START single_value_read]
-     //   final String userId = getUid();
-
         writeNewPost(post);
         setEditingEnabled(true);
-        // [END single_value_read]
     }
 
     private void setEditingEnabled(boolean enabled) {
@@ -93,16 +89,7 @@ public class NewPostActivity extends AppCompatActivity {
         }
     }
 
-    // [START write_fan_out]
     private void writeNewPost(Post new_post) {
-        // Create new post at /user-posts/$userid/$postid and at
-        // /posts/$postid simultaneously
-     //   String key = mDatabase.child("posts").push().getKey();
-
-
         mDatabase.postDao().addPost(new_post);
-
-
     }
-    // [END write_fan_out]
 }
