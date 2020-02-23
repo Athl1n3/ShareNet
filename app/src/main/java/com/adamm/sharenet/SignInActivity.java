@@ -127,5 +127,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private void writeNewUser(String userName, String email, String password) {//Write user to database
         User newUser = new User(userName, email, password);
         mDatabase.userDao().addUser(newUser);
+        AppDatabase.curr_user =  mDatabase.userDao().getUser(email);
     }
 }

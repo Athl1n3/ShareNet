@@ -36,9 +36,7 @@ public class NewPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
 
-        // [START initialize_database_ref]
         mDatabase = AppDatabase.getAppDatabase(getApplicationContext());
-        // [END initialize_database_ref]
 
         mTitleField = findViewById(R.id.fieldTitle);
         mBodyField = findViewById(R.id.fieldBody);
@@ -77,6 +75,7 @@ public class NewPostActivity extends AppCompatActivity {
 
         writeNewPost(post);
         setEditingEnabled(true);
+        finish();
     }
 
     private void setEditingEnabled(boolean enabled) {
