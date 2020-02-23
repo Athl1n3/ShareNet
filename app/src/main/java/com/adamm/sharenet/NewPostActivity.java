@@ -7,25 +7,24 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.adamm.sharenet.models.Post;
-import com.adamm.sharenet.models.User;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.adamm.sharenet.Database.AppDatabase;
+import com.adamm.sharenet.entities.Post;
+import com.adamm.sharenet.entities.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class NewPostActivity extends BaseActivity {
+public class NewPostActivity extends AppCompatActivity {
 
     private static final String TAG = "NewPostActivity";
     private static final String REQUIRED = "Required";
 
+    private AppDatabase mDatabase;
+
     // [START declare_database_ref]
-    private DatabaseReference mDatabase;
     // [END declare_database_ref]
 
     private EditText mTitleField;
@@ -38,7 +37,7 @@ public class NewPostActivity extends BaseActivity {
         setContentView(R.layout.activity_new_post);
 
         // [START initialize_database_ref]
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = AppDatabase.getAppDatabase(getApplicationContext());
         // [END initialize_database_ref]
 
         mTitleField = findViewById(R.id.fieldTitle);
@@ -57,6 +56,9 @@ public class NewPostActivity extends BaseActivity {
         final String title = mTitleField.getText().toString();
         final String body = mBodyField.getText().toString();
 
+        User user = AppDatabase.curr_user;
+        Post post = new Post(String.valueOf(user.uid),user.username,title,body);
+
         // Title is required
         if (TextUtils.isEmpty(title)) {
             mTitleField.setError(REQUIRED);
@@ -74,40 +76,10 @@ public class NewPostActivity extends BaseActivity {
         Toast.makeText(this, "Posting...", Toast.LENGTH_SHORT).show();
 
         // [START single_value_read]
-        final String userId = getUid();
-        mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get user value
-                        User user = dataSnapshot.getValue(User.class);
+     //   final String userId = getUid();
 
-                        // [START_EXCLUDE]
-                        if (user == null) {
-                            // User is null, error out
-                            Log.e(TAG, "User " + userId + " is unexpectedly null");
-                            Toast.makeText(NewPostActivity.this,
-                                    "Error: could not fetch user.",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            // Write new post
-                            writeNewPost(userId, user.username, title, body);
-                        }
-
-                        // Finish this Activity, back to the stream
-                        setEditingEnabled(true);
-                        finish();
-                        // [END_EXCLUDE]
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                        // [START_EXCLUDE]
-                        setEditingEnabled(true);
-                        // [END_EXCLUDE]
-                    }
-                });
+        writeNewPost(post);
+        setEditingEnabled(true);
         // [END single_value_read]
     }
 
@@ -122,18 +94,15 @@ public class NewPostActivity extends BaseActivity {
     }
 
     // [START write_fan_out]
-    private void writeNewPost(String userId, String username, String title, String body) {
+    private void writeNewPost(Post new_post) {
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
-        String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username, title, body);
-        Map<String, Object> postValues = post.toMap();
+     //   String key = mDatabase.child("posts").push().getKey();
 
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/posts/" + key, postValues);
-        childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
 
-        mDatabase.updateChildren(childUpdates);
+        mDatabase.postDao().addPost(new_post);
+
+
     }
     // [END write_fan_out]
 }

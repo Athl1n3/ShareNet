@@ -17,6 +17,7 @@ import com.adamm.sharenet.entities.User;
 @Database(entities = {User.class, Post.class, Comment.class}, version =  1)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
+    public static User curr_user;
 
     public abstract UserDao userDao();
     public abstract PostDao postDao();

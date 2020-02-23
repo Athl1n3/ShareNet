@@ -66,6 +66,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if(user == null)
             Toast.makeText(this, "Invalid login details!", Toast.LENGTH_SHORT).show();
         else {
+            AppDatabase.curr_user =  user;
             startActivity(new Intent(SignInActivity.this, MainActivity.class));
             finish();
         }
