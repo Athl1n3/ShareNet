@@ -10,12 +10,14 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adamm.sharenet.Database.AppDatabase;
 import com.adamm.sharenet.PostDetailDialog;
 import com.adamm.sharenet.R;
+import com.adamm.sharenet.ViewModel.PostViewModel;
 import com.adamm.sharenet.entities.Post;
 
 import java.util.List;
@@ -30,6 +32,8 @@ public abstract class PostListFragment extends Fragment {
     public PostAdapter mAdapter;
     private RecyclerView mRecycler;
     private LinearLayoutManager mManager;
+
+    private PostViewModel postViewModel;
 
     public PostListFragment() {}
 
@@ -51,21 +55,45 @@ public abstract class PostListFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
         // Set up Layout Manager, reverse layout
         mManager = new LinearLayoutManager(getActivity());
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
-        LiveData<List<Post>> livePosts = getQuery(mDatabase);
-        livePosts.observe(this, new Observer<List<Post>>() {
+      //  LiveData<List<Post>> livePosts = getQuery(mDatabase);
+      /*  livePosts.observe(this, new Observer<List<Post>>() {
             @Override
             public void onChanged(List<Post> posts) {
                 mAdapter.setData(posts);
             }
 
         });
-        List<Post> posts = livePosts.getValue();
-        mAdapter = new PostAdapter(posts);//Posts query list result
+
+       */
+
+        postViewModel = ViewModelProviders.of(this).get(PostViewModel.class);
+
+        if(getWho() == 1) {
+            postViewModel.getAllPosts().observe(this, new Observer<List<Post>>() {
+                @Override
+                public void onChanged(List<Post> posts) {
+                    mAdapter.setData(posts);
+                }
+            });
+
+        }
+        else {
+            postViewModel.getMyPosts().observe(this, new Observer<List<Post>>() {
+                @Override
+                public void onChanged(List<Post> posts) {
+                    mAdapter.setData(posts);
+                }
+            });
+        }
+
+       // List<Post> posts = livePosts.getValue();
+        mAdapter = new PostAdapter(postViewModel.getAllPosts().getValue());//Posts query list result
         mRecycler.setAdapter(mAdapter);
     }
 
@@ -139,4 +167,6 @@ public abstract class PostListFragment extends Fragment {
         }
     }
     public abstract LiveData<List<Post>> getQuery(AppDatabase databaseReference);
+
+    public abstract  int getWho() ;
 }

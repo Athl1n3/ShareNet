@@ -15,4 +15,9 @@ public class PostsFragment extends PostListFragment {
     public LiveData<List<Post>> getQuery(AppDatabase mDatabase) {
         return mDatabase.postDao().getPosts();
     }
+
+
+    public int getWho() {
+        return 1;
+    }
 }
