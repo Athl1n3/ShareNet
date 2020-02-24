@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adamm.sharenet.Database.AppDatabase;
+import com.adamm.sharenet.PostDetailDialog;
 import com.adamm.sharenet.R;
 import com.adamm.sharenet.entities.Post;
 
@@ -104,7 +105,7 @@ public abstract class PostListFragment extends Fragment {
         }
     }
 
-    public class PostViewHolder extends RecyclerView.ViewHolder {
+    public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
         public TextView titleView;
         public TextView authorView;
@@ -119,6 +120,7 @@ public abstract class PostListFragment extends Fragment {
             starView = itemView.findViewById(R.id.star);
             numStarsView = itemView.findViewById(R.id.postNumStars);
             bodyView = itemView.findViewById(R.id.postBody);
+            itemView.setOnLongClickListener(this);
         }
 
         public void bindToPost(Post post) {
@@ -127,6 +129,13 @@ public abstract class PostListFragment extends Fragment {
             authorView.setText(post.author);
             numStarsView.setText(String.valueOf(post.starCount));
             bodyView.setText(post.body);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+          PostDetailDialog dialog = new PostDetailDialog(new Post(authorView.getText().toString(),authorView.getText().toString(),titleView.getText().toString(),bodyView.getText().toString()));
+          dialog.show(getActivity().getSupportFragmentManager(), "Post " );
+            return false;
         }
     }
     public abstract LiveData<List<Post>> getQuery(AppDatabase databaseReference);
