@@ -16,12 +16,13 @@ import androidx.fragment.app.DialogFragment;
 import com.adamm.sharenet.R;
 import com.adamm.sharenet.entities.Post;
 
+import org.w3c.dom.Text;
+
 public class PostDetailDialog extends DialogFragment {
 
-    Button deletebtn;
-    Button closebtn;
     TextView bodytxt;
     TextView authortxt;
+    TextView titleTxt;
 
 
     public PostDetailDialog(Post post) {//Get current bar progress from host activity
@@ -39,32 +40,14 @@ public class PostDetailDialog extends DialogFragment {
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        View v = requireActivity().getLayoutInflater().inflate(R.layout.postdetails, null);
-        deletebtn = v.findViewById(R.id.deletebtn);
-        closebtn = v.findViewById(R.id.closeBtn);
-        bodytxt = v.findViewById(R.id.bodyTxtView);
-        authortxt = v.findViewById(R.id.AuthorTxtView);
+        View v = requireActivity().getLayoutInflater().inflate(R.layout.activity_post_detail, null);
+        bodytxt = v.findViewById(R.id.postBody);
+        authortxt = v.findViewById(R.id.postAuthor);
+        titleTxt = v.findViewById(R.id.postTitle);
 
         bodytxt.setText(getArguments().getString("body"));
-        authortxt.setText(getArguments().getString("title"));
-
-        builder.setTitle(getArguments().getString("username")).setView(v);
-
-        //Restore progress
-
-
-        // Add action buttons
-        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                //
-            }
-        });
-        builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                //delete post from DB
-            }
-        });
+        authortxt.setText(getArguments().getString("username"));
+        builder.setTitle(getArguments().getString("title")).setView(v);
 
         return builder.create();
     }
