@@ -27,9 +27,7 @@ public class PostViewModel extends AndroidViewModel {
         return postDao.getPosts();
     }
 
-    public LiveData<List<Post>> getMyPosts() {
-        return postDao.getMyPosts(AppDatabase.curr_user.uid);
-    }
+    public LiveData<List<Post>> getMyPosts() { return postDao.getMyPosts(AppDatabase.curr_user.uid); }
 
   /*  public void savePost(Post post) {
         new Thread(new Runnable() {

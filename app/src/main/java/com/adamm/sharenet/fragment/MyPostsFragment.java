@@ -3,8 +3,6 @@ package com.adamm.sharenet.fragment;
 import android.os.Bundle;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.adamm.sharenet.Database.AppDatabase;
 import com.adamm.sharenet.ViewModel.PostViewModel;

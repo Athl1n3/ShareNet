@@ -68,7 +68,7 @@ public class NewPostActivity extends AppCompatActivity {
             return;
         }
 
-        Post post = new Post(String.valueOf(user.uid),user.username,title,body);
+        Post post = new Post(user.uid,user.username,title,body);
         // Disable button so there are no multi-posts
         setEditingEnabled(false);
         Toast.makeText(this, "Posting...", Toast.LENGTH_SHORT).show();
