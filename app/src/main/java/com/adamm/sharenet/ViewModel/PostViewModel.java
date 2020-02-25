@@ -29,7 +29,7 @@ public class PostViewModel extends AndroidViewModel {
 
     public LiveData<List<Post>> getMyPosts() { return postDao.getMyPosts(AppDatabase.curr_user.uid); }
 
-  /*  public void savePost(Post post) {
+    public void savePost(final Post post) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -41,7 +41,7 @@ public class PostViewModel extends AndroidViewModel {
         }).start();
     }
 
-    public void deletePost(Post post) {
+    public void deletePost(final Post post) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -53,5 +53,5 @@ public class PostViewModel extends AndroidViewModel {
         }).start();
     }
 
-   */
+
 }
