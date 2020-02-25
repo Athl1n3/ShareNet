@@ -75,7 +75,7 @@ public abstract class PostListFragment extends Fragment {
         postViewModel = ViewModelProviders.of(this).get(PostViewModel.class);
 
         if(getWho() == 1) {
-            postViewModel.getAllPosts().observe(this, new Observer<List<Post>>() {
+            postViewModel.getAllPosts().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
                 @Override
                 public void onChanged(List<Post> posts) {
                     mAdapter.setData(posts);
@@ -84,7 +84,7 @@ public abstract class PostListFragment extends Fragment {
 
         }
         else {
-            postViewModel.getMyPosts().observe(this, new Observer<List<Post>>() {
+            postViewModel.getMyPosts().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
                 @Override
                 public void onChanged(List<Post> posts) {
                     mAdapter.setData(posts);
@@ -137,16 +137,15 @@ public abstract class PostListFragment extends Fragment {
 
         public TextView titleView;
         public TextView authorView;
-        public ImageView starView;
-        public TextView numStarsView;
+        public ImageView deleteView;
         public TextView bodyView;
 
         public PostViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_post, parent, false));
             titleView = itemView.findViewById(R.id.postTitle);
             authorView = itemView.findViewById(R.id.postAuthor);
-            starView = itemView.findViewById(R.id.star);
-            numStarsView = itemView.findViewById(R.id.postNumStars);
+            deleteView = itemView.findViewById(R.id.delete);
+            deleteView.setImageResource(R.drawable.ic_delete_24px);
             bodyView = itemView.findViewById(R.id.postBody);
             itemView.setOnLongClickListener(this);
         }
@@ -155,13 +154,13 @@ public abstract class PostListFragment extends Fragment {
             final Post posta = post;
             titleView.setText(post.title);
             authorView.setText(post.author);
-            numStarsView.setText(String.valueOf(post.starCount));
+           // numStarsView.setText(String.valueOf(post.starCount));
             bodyView.setText(post.body);
         }
 
         @Override
         public boolean onLongClick(View view) {
-          PostDetailDialog dialog = new PostDetailDialog(new Post(authorView.getText().toString(),authorView.getText().toString(),titleView.getText().toString(),bodyView.getText().toString()));
+          PostDetailDialog dialog = new PostDetailDialog(new Post(Integer.parseInt(authorView.getText().toString()),authorView.getText().toString(),titleView.getText().toString(),bodyView.getText().toString()));
           dialog.show(getActivity().getSupportFragmentManager(), "Post " );
             return false;
         }

@@ -3,6 +3,7 @@ package com.adamm.sharenet;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.adamm.sharenet.Services.PostService;
 import com.adamm.sharenet.fragment.MyPostsFragment;
 import com.adamm.sharenet.fragment.PostsFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -10,6 +11,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, NewPostActivity.class));//Launch new activity for new post
             }
         });
+
+        startService();
     }
 
     @Override
@@ -81,5 +85,18 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
+
+    public void startService() {
+        Intent serviceIntent = new Intent(this, PostService.class);
+        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+    public void stopService() {
+        Intent serviceIntent = new Intent(this, PostService.class);
+        stopService(serviceIntent);
+    }
+
 
 }
