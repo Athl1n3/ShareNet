@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         editor.clear().apply();
         editor.putString("firstName", AppDatabase.getCurr_user().firstName);
         editor.putString("lastName", AppDatabase.getCurr_user().lastName);
+        editor.putString("email", AppDatabase.getCurr_user().email);
         editor.apply();
     }
 

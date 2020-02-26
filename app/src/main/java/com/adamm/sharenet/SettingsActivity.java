@@ -28,6 +28,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private EditText mLastNameField;
     private EditText mPasswordField;
     private Button mBtnEditPassword;
+    private EditText mEmailField;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
 
@@ -40,11 +41,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         // Views
         mFirstNameField = findViewById(R.id.editFirstName);
         mLastNameField = findViewById(R.id.editLastName);
+        mEmailField = findViewById(R.id.editEmail);
         mPasswordField = findViewById(R.id.editPassword);
         mBtnEditPassword = findViewById(R.id.btnEditPassword);
 
         sharedPref = this.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        mEmailField.setText(sharedPref.getString("email", ""));
         mFirstNameField.setText(sharedPref.getString("firstName", ""));
         mLastNameField.setText(sharedPref.getString("lastName", ""));
 
