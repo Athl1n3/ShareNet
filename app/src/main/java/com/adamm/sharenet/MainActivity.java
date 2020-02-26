@@ -86,15 +86,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService();
+    }
+    Intent serviceIntent;
     public void startService() {
-        Intent serviceIntent = new Intent(this, PostService.class);
+         serviceIntent = new Intent(this, PostService.class);
         serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
         ContextCompat.startForegroundService(this, serviceIntent);
     }
     public void stopService() {
-        Intent serviceIntent = new Intent(this, PostService.class);
         stopService(serviceIntent);
     }
 

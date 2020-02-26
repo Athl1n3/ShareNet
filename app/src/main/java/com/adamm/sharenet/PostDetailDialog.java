@@ -23,6 +23,7 @@ public class PostDetailDialog extends DialogFragment {
 
     TextView bodytxt;
     TextView authortxt;
+    TextView titleTxt;
     Post post;
 
 
@@ -42,27 +43,14 @@ public class PostDetailDialog extends DialogFragment {
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        View v = requireActivity().getLayoutInflater().inflate(R.layout.postdetails, null);
-
-
-        bodytxt = v.findViewById(R.id.bodyTxtView);
-        authortxt = v.findViewById(R.id.AuthorTxtView);
+        View v = requireActivity().getLayoutInflater().inflate(R.layout.activity_post_detail, null);
+        bodytxt = v.findViewById(R.id.postBody);
+        authortxt = v.findViewById(R.id.postAuthor);
+        titleTxt = v.findViewById(R.id.postTitle);
 
         bodytxt.setText(getArguments().getString("body"));
-        authortxt.setText(getArguments().getString("title"));
-
-        builder.setTitle(getArguments().getString("username")).setView(v);
-
-        //Restore progress
-
-
-        // Add action buttons
-        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                //
-            }
-        });
+        authortxt.setText(getArguments().getString("username"));
+        builder.setTitle(getArguments().getString("title")).setView(v);
 
         return builder.create();
     }

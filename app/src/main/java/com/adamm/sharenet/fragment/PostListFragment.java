@@ -1,5 +1,6 @@
 package com.adamm.sharenet.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -139,6 +141,7 @@ public abstract class PostListFragment extends Fragment {
         public TextView authorView;
         public ImageView deleteView;
         public TextView bodyView;
+        public Post posta;
 
         public PostViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_post, parent, false));
@@ -150,18 +153,37 @@ public abstract class PostListFragment extends Fragment {
             itemView.setOnLongClickListener(this);
         }
 
-        public void bindToPost(Post post) {
-            final Post posta = post;
+        public void bindToPost(Post post) {//BUG NEEDS TO BE FIXED
+            posta = post;
             titleView.setText(post.title);
             authorView.setText(post.author);
-           // numStarsView.setText(String.valueOf(post.starCount));
+            if(AppDatabase.curr_user.uid != posta.uid)
+                deleteView.setVisibility(View.INVISIBLE);
+            else {
+                deleteView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage("Are you sure you want to delete this post?")
+                                .setTitle("Delete post");
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                postViewModel.deletePost(posta);
+                            }
+                        });
+                        builder.setNegativeButton("Cancel", null);
+                        builder.create().show();
+                    }
+                });
+            }
             bodyView.setText(post.body);
         }
 
         @Override
         public boolean onLongClick(View view) {
-          PostDetailDialog dialog = new PostDetailDialog(new Post(Integer.parseInt(authorView.getText().toString()),authorView.getText().toString(),titleView.getText().toString(),bodyView.getText().toString()));
-          dialog.show(getActivity().getSupportFragmentManager(), "Post " );
+            PostDetailDialog dialog = new PostDetailDialog(new Post(AppDatabase.curr_user.uid,authorView.getText().toString(),titleView.getText().toString(),bodyView.getText().toString()));
+            dialog.show(getActivity().getSupportFragmentManager(), "Post " );
             return false;
         }
     }
