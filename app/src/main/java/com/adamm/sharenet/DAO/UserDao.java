@@ -12,8 +12,8 @@ import com.adamm.sharenet.entities.User;
 public interface UserDao {
 
     @Transaction
-    @Query("SELECT * FROM users WHERE email LIKE  :email AND password LIKE :password")
-    User getLoginDetails(String email, String password);
+    @Query("SELECT * FROM users WHERE email LIKE  :email")
+    User getLoginDetails(String email);
 
     @Query("SELECT * FROM users WHERE email LIKE :email")
     User getUser(String email);

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -45,6 +46,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         mPasswordField = findViewById(R.id.editPassword);
         mBtnEditPassword = findViewById(R.id.btnEditPassword);
 
+        ((TextView)findViewById(R.id.txtLoggedUser)).setText(AppDatabase.getCurr_user().username);
         sharedPref = this.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         mEmailField.setText(sharedPref.getString("email", ""));

@@ -60,8 +60,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         }
         String email = mEmailField.getText().toString();
         String password = mPasswordField.getText().toString();
-        User user = mDatabase.userDao().getLoginDetails(email, password);
-        if(user == null)
+        User user = mDatabase.userDao().getLoginDetails(email);
+        if(user == null || !(user.password.equals(password)))
             Toast.makeText(this, "Invalid login details!", Toast.LENGTH_SHORT).show();
         else {
             AppDatabase.setCurr_user(user);
@@ -78,7 +78,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         String email = mEmailField.getText().toString();
         String password = mPasswordField.getText().toString();
-        if((mDatabase.userDao().getLoginDetails(email,password)) != null)
+        if((mDatabase.userDao().getLoginDetails(email)) != null)
             Toast.makeText(this, "Registration failed user already exists", Toast.LENGTH_SHORT).show();
         else {
             String username = email.split("@")[0];
