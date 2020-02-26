@@ -23,22 +23,22 @@ public class PostBroadcastReceiver extends BroadcastReceiver {
     private AppDatabase mDatabase;
     @Override
     public void onReceive(Context context, Intent intent) {
-        getMessageText(intent);
+        getMessageText(context,intent);
 
     }
-    private CharSequence getMessageText(Intent intent) {
+    private CharSequence getMessageText(Context context,Intent intent) {
         Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
         if (remoteInput != null) {
             mDatabase.postDao().addPost(
                     new Post(mDatabase.curr_user.uid, mDatabase.curr_user.username, "From Foreground", String.valueOf(remoteInput.getCharSequence(KEY_TEXT_REPLY))));
 
-            Notification repliedNotification = new Notification.Builder(this, CHANNEL_ID)
+            Notification repliedNotification = new Notification.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_delete_24px)
                     .setContentText("Posted")
                     .build();
 
             // Issue the new notification.
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
             notificationManager.notify(notificationId, repliedNotification);
             return remoteInput.getCharSequence(KEY_TEXT_REPLY);
         }
