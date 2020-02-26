@@ -1,8 +1,11 @@
 package com.adamm.sharenet;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import com.adamm.sharenet.Database.AppDatabase;
 import com.adamm.sharenet.Services.PostService;
 import com.adamm.sharenet.fragment.MyPostsFragment;
 import com.adamm.sharenet.fragment.PostsFragment;
@@ -65,7 +68,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        createPreferences();
         startService();
+    }
+
+    public void createPreferences()
+    {
+       SharedPreferences sharedPref = this.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.clear().apply();
+        editor.putString("firstName", AppDatabase.getCurr_user().firstName);
+        editor.putString("lastName", AppDatabase.getCurr_user().lastName);
+        editor.apply();
     }
 
     @Override
@@ -77,9 +93,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_settings:
+                startActivity(new Intent(this,  SettingsActivity.class));
+                return true;
+
             case R.id.action_logout:
                 startActivity(new Intent(this, SignInActivity.class));
+                AppDatabase.destroyInstance();
                 finish();
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -94,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     Intent serviceIntent;
     public void startService() {
          serviceIntent = new Intent(this, PostService.class);
-        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
+      //  serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
         ContextCompat.startForegroundService(this, serviceIntent);
     }
     public void stopService() {

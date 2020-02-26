@@ -9,10 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.adamm.sharenet.DAO.UserDao;
 import com.adamm.sharenet.Database.AppDatabase;
 import com.adamm.sharenet.entities.User;
 
@@ -66,7 +64,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if(user == null)
             Toast.makeText(this, "Invalid login details!", Toast.LENGTH_SHORT).show();
         else {
-            AppDatabase.curr_user =  user;
+            AppDatabase.setCurr_user(user);
             startActivity(new Intent(SignInActivity.this, MainActivity.class));
             finish();
         }
@@ -127,6 +125,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private void writeNewUser(String userName, String email, String password) {//Write user to database
         User newUser = new User(userName, email, password);
         mDatabase.userDao().addUser(newUser);
-        AppDatabase.curr_user =  mDatabase.userDao().getUser(email);
+        AppDatabase.setCurr_user(mDatabase.userDao().getUser(email));
     }
 }

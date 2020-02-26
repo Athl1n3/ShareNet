@@ -4,6 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 import com.adamm.sharenet.entities.User;
 
@@ -16,6 +17,9 @@ public interface UserDao {
 
     @Query("SELECT * FROM users WHERE email LIKE :email")
     User getUser(String email);
+
+    @Update
+    void editUser(User user);
 
     @Insert
     void addUser(User user);

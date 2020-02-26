@@ -39,7 +39,7 @@ public class PostService extends Service {
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String input = intent.getStringExtra("inputExtra");
+        //String input = intent.getStringExtra("inputExtra");
         createNotificationChannel();//Create channel for 7.1 and up
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -52,9 +52,10 @@ public class PostService extends Service {
 
         RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY)
                 .setLabel("New post text")
-                .build();
+                .build();//Make Remote input object
+
         Intent postIntent = new Intent(this, PostBroadcastReceiver.class);
-        PendingIntent postReplyPendingIntent = PendingIntent.getBroadcast(this, 0, postIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent postReplyPendingIntent = PendingIntent.getBroadcast(this, 0, postIntent, PendingIntent.FLAG_UPDATE_CURRENT);//Launch broadcast receiver for post replies
 
         NotificationCompat.Action replyAction =
                 new NotificationCompat.Action.Builder(R.drawable.ic_image_edit,
@@ -62,13 +63,15 @@ public class PostService extends Service {
                         .addRemoteInput(remoteInput)
                         .build();
 
+
+        //**Building the whole notification**//
         NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.drawable.ic_toggle_star_outline_24)
                 .setContentTitle("ShareNet Post Service")
                 .setContentText("Type in your post")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
-                .addAction(replyAction);
+                .setContentIntent(pendingIntent)// Launch mainActivity on click
+                .addAction(replyAction);//New post reply action
 
 
 
@@ -79,6 +82,7 @@ public class PostService extends Service {
                 .setContentIntent(pendingIntent)
                 .addAction(R.drawable.ic_toggle_star_24,"Post",postPendingIntent)
                 .build();*/
+
         startForeground(1, notification.build());
         //do heavy work on a background thread
         //stopSelf();

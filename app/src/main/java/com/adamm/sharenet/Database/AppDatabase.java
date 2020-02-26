@@ -21,7 +21,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract UserDao userDao();
     public abstract PostDao postDao();
-    public  abstract CommentDao commentDao();
+   // public  abstract CommentDao commentDao();
 
     public static AppDatabase getAppDatabase(Context context)
     {
@@ -31,5 +31,13 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public static void destroyInstance()
-    { INSTANCE = null;}
+    { INSTANCE = null; curr_user = null;}
+
+    public static User getCurr_user() {
+        return curr_user;
+    }
+
+    public static void setCurr_user(User curr_user) {
+        AppDatabase.curr_user = curr_user;
+    }
 }

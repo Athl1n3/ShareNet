@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings" />
+    <item
         android:id="@+id/action_logout"
         android:title="@string/menu_logout"
         android:visible="true"
