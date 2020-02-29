@@ -69,7 +69,6 @@ public class PostService extends Service {
                 .setContentIntent(pendingIntent)// Launch mainActivity on click
                 .addAction(replyAction);//New post reply action
 
-        AppDatabase.postService = this;
         startForeground(AppDatabase.getNotificationId(), notification.build());
         //do heavy work on a background thread
         //stopSelf();

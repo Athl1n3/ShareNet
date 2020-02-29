@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         AppDatabase.destroyInstance();
         stopService();
-        AppDatabase.postService.stopSelf();
     }
     Intent serviceIntent;
     public void startService() {
