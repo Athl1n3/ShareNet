@@ -24,9 +24,6 @@ public class NewPostActivity extends AppCompatActivity {
 
     private AppDatabase mDatabase;
 
-    // [START declare_database_ref]
-    // [END declare_database_ref]
-
     private EditText mTitleField;
     private EditText mBodyField;
     private FloatingActionButton mSubmitButton;
@@ -36,7 +33,7 @@ public class NewPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
 
-        mDatabase = AppDatabase.getAppDatabase(getApplicationContext());
+        mDatabase = AppDatabase.getAppDatabase(getApplicationContext());//Get database instance
 
         mTitleField = findViewById(R.id.fieldTitle);
         mBodyField = findViewById(R.id.fieldBody);
@@ -54,7 +51,7 @@ public class NewPostActivity extends AppCompatActivity {
         final String title = mTitleField.getText().toString();
         final String body = mBodyField.getText().toString();
 
-        User user = AppDatabase.curr_user;
+        User user = AppDatabase.getCurr_user();
 
         // Title is required
         if (TextUtils.isEmpty(title)) {
@@ -68,7 +65,7 @@ public class NewPostActivity extends AppCompatActivity {
             return;
         }
 
-        Post post = new Post(user.uid,user.username,title,body);
+        Post post = new Post(user.uid,user.username,title,body);//Make new post object
         // Disable button so there are no multi-posts
         setEditingEnabled(false);
         Toast.makeText(this, "Posting...", Toast.LENGTH_SHORT).show();

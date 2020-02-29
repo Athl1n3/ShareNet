@@ -8,7 +8,6 @@ import androidx.room.Query;
 
 import com.adamm.sharenet.entities.Post;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Dao

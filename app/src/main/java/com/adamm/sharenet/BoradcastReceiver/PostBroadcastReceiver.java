@@ -11,13 +11,13 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.adamm.sharenet.Database.AppDatabase;
 import com.adamm.sharenet.R;
+import com.adamm.sharenet.Services.PostService;
 import com.adamm.sharenet.entities.Post;
 
 import static com.adamm.sharenet.Services.PostService.CHANNEL_ID;
 
 public class PostBroadcastReceiver extends BroadcastReceiver {
     private static final String KEY_TEXT_REPLY = "POST_KEY";
-    private static int notificationId = 1;
     private AppDatabase mDatabase;
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -25,7 +25,7 @@ public class PostBroadcastReceiver extends BroadcastReceiver {
         getMessageText(context,intent);
     }
 
-    private CharSequence getMessageText(Context context, Intent intent) {
+    private void getMessageText(Context context, Intent intent) {
         Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
         if (remoteInput != null) {
             mDatabase.postDao().addPost(
@@ -33,15 +33,15 @@ public class PostBroadcastReceiver extends BroadcastReceiver {
 
             Notification repliedNotification = new Notification.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_toggle_star_24).setContentText("Posted")
-                    .setRemoteInputHistory(remoteInput.getCharSequenceArray(KEY_TEXT_REPLY))
+                    .setRemoteInputHistory(remoteInput.getCharSequenceArray(KEY_TEXT_REPLY)).setTimeoutAfter(1)
                     .build();
-
             // Issue the new notification reply that post was posted successfully.
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            notificationManager.notify(notificationId, repliedNotification);
+            notificationManager.notify(AppDatabase.getNotificationId(), repliedNotification);
 
-            return remoteInput.getCharSequence(KEY_TEXT_REPLY);
+            //AppDatabase.setNotificationId(AppDatabase.getNotificationId()+1);
+           // AppDatabase.postService.stopSelf();
+            //AppDatabase.postService.startForegroundService(new Intent(context, PostService.class));
         }
-        return null;
     }
 }

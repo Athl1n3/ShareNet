@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,7 +32,7 @@ public abstract class PostListFragment extends Fragment {
 
     private AppDatabase mDatabase;
 
-    public PostAdapter mAdapter;
+    public PostAdapter mAdapter = null;
     private RecyclerView mRecycler;
     private LinearLayoutManager mManager;
 
@@ -60,23 +61,24 @@ public abstract class PostListFragment extends Fragment {
 
         // Set up Layout Manager, reverse layout
         mManager = new LinearLayoutManager(getActivity());
-        mManager.setReverseLayout(true);
+        mManager.setReverseLayout(true);//Newest on top
         mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
-      //  LiveData<List<Post>> livePosts = getQuery(mDatabase);
-      /*  livePosts.observe(this, new Observer<List<Post>>() {
+
+        postViewModel = new ViewModelProvider(this).get(PostViewModel.class);;
+
+        getQuery(mDatabase, postViewModel).observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
             @Override
             public void onChanged(List<Post> posts) {
+                if(mAdapter == null){
+                    mAdapter = new PostAdapter(getQuery(mDatabase,postViewModel).getValue());//Posts query list result
+                    mRecycler.setAdapter(mAdapter);
+                }
                 mAdapter.setData(posts);
             }
-
         });
-
-       */
-
-        postViewModel = ViewModelProviders.of(this).get(PostViewModel.class);
-
-        if(getWho() == 1) {
+        /*if(this instanceof PostsFragment)
+            {
             postViewModel.getAllPosts().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
                 @Override
                 public void onChanged(List<Post> posts) {
@@ -92,11 +94,7 @@ public abstract class PostListFragment extends Fragment {
                     mAdapter.setData(posts);
                 }
             });
-        }
-
-       // List<Post> posts = livePosts.getValue();
-        mAdapter = new PostAdapter(postViewModel.getAllPosts().getValue());//Posts query list result
-        mRecycler.setAdapter(mAdapter);
+        }*/
     }
 
     private class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
@@ -135,7 +133,7 @@ public abstract class PostListFragment extends Fragment {
         }
     }
 
-    public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+    public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView titleView;
         public TextView authorView;
@@ -150,7 +148,7 @@ public abstract class PostListFragment extends Fragment {
             deleteView = itemView.findViewById(R.id.delete);
             deleteView.setImageResource(R.drawable.ic_delete_24px);
             bodyView = itemView.findViewById(R.id.postBody);
-            itemView.setOnLongClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         public void bindToPost(Post post) {//BUG NEEDS TO BE FIXED
@@ -160,6 +158,7 @@ public abstract class PostListFragment extends Fragment {
             if(AppDatabase.curr_user.uid != posta.uid)
                 deleteView.setVisibility(View.INVISIBLE);
             else {
+                deleteView.setVisibility(View.VISIBLE);
                 deleteView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -181,13 +180,10 @@ public abstract class PostListFragment extends Fragment {
         }
 
         @Override
-        public boolean onLongClick(View view) {
-            PostDetailDialog dialog = new PostDetailDialog(new Post(AppDatabase.curr_user.uid,authorView.getText().toString(),titleView.getText().toString(),bodyView.getText().toString()));
+        public void onClick(View view) {
+            PostDetailDialog dialog = new PostDetailDialog(posta);
             dialog.show(getActivity().getSupportFragmentManager(), "Post " );
-            return false;
         }
     }
-    public abstract LiveData<List<Post>> getQuery(AppDatabase databaseReference);
-
-    public abstract  int getWho() ;
+    public abstract LiveData<List<Post>> getQuery(AppDatabase databaseReference, PostViewModel postViewModel);
 }

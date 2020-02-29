@@ -12,18 +12,11 @@ import java.util.List;
 
 public class MyPostsFragment extends PostListFragment {
 
-    private PostViewModel postViewModel;
-
-
     public MyPostsFragment() {}
 //QUERY FOR POSTS HERE
     @Override
-    public LiveData<List<Post>> getQuery(AppDatabase mDatabase) {
-        return mDatabase.postDao().getMyPosts(AppDatabase.curr_user.uid);
+    public LiveData<List<Post>> getQuery(AppDatabase mDatabase, PostViewModel postViewModel) {
+        return postViewModel.getMyPosts();
+       // return mDatabase.postDao().getMyPosts(AppDatabase.curr_user.uid);
     }
-
-    public int getWho() {
-        return 0;
-    }
-
 }

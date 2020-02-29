@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +59,22 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         editor = sharedPref.edit();
         // Click listeners
         mBtnEditPassword.setOnClickListener(this);
+        mBtnEditPassword.setEnabled(false);
+        mPasswordField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (TextUtils.isEmpty(mPasswordField.getText().toString()))
+                    mBtnEditPassword.setEnabled(false);
+                else
+                    mBtnEditPassword.setEnabled(true);
+            }
+        });
     }
 
     @Override
@@ -66,10 +85,14 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                AppDatabase.getCurr_user().password = mPasswordField.getText().toString();
-                mDatabase.userDao().editUser(AppDatabase.getCurr_user());
-                Toast.makeText(getApplicationContext(), "Password was edited successfully!", Toast.LENGTH_SHORT).show();
-                finish();
+                if (mPasswordField.getText().toString().length() >= 4) {
+                    AppDatabase.getCurr_user().password = mPasswordField.getText().toString();
+                    mDatabase.userDao().editUser(AppDatabase.getCurr_user());
+                    Toast.makeText(getApplicationContext(), "Password was edited successfully!", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                else
+                    mPasswordField.setError("Password must be longer than 4");
             }
         });
         builder.setNegativeButton("Cancel", null);

@@ -23,9 +23,7 @@ public class PostViewModel extends AndroidViewModel {
    //     executorService = Executors.newSingleThreadExecutor();
     }
 
-    public LiveData<List<Post>> getAllPosts() {
-        return postDao.getPosts();
-    }
+    public LiveData<List<Post>> getAllPosts() { return postDao.getPosts(); }
 
     public LiveData<List<Post>> getMyPosts() { return postDao.getMyPosts(AppDatabase.curr_user.uid); }
 

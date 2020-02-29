@@ -9,8 +9,6 @@ import com.adamm.sharenet.Database.AppDatabase;
 import com.adamm.sharenet.Services.PostService;
 import com.adamm.sharenet.fragment.MyPostsFragment;
 import com.adamm.sharenet.fragment.PostsFragment;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -99,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_logout:
+
                 startActivity(new Intent(this, SignInActivity.class));
-                AppDatabase.destroyInstance();
                 finish();
 
                 return true;
@@ -112,12 +110,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        AppDatabase.destroyInstance();
         stopService();
+        AppDatabase.postService.stopSelf();
     }
     Intent serviceIntent;
     public void startService() {
          serviceIntent = new Intent(this, PostService.class);
-      //  serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
         ContextCompat.startForegroundService(this, serviceIntent);
     }
     public void stopService() {

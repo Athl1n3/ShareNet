@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.RemoteInput;
 
 import com.adamm.sharenet.BoradcastReceiver.PostBroadcastReceiver;
+import com.adamm.sharenet.Database.AppDatabase;
 import com.adamm.sharenet.MainActivity;
 import com.adamm.sharenet.R;
 
@@ -39,17 +40,12 @@ public class PostService extends Service {
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //String input = intent.getStringExtra("inputExtra");
         createNotificationChannel();//Create channel for 7.1 and up
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);//Launch main activity when tapped
 /////////////----------------//
-
-        /*postIntent.setAction(Action);
-        postIntent.putExtra(CHANNEL_ID, 0);
-        PendingIntent postPendingIntent = PendingIntent.getBroadcast(this, 0, postIntent, 0);*/
-
+        //Building reply objects
         RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY)
                 .setLabel("New post text")
                 .build();//Make Remote input object
@@ -62,7 +58,7 @@ public class PostService extends Service {
                         "New Post", postReplyPendingIntent)
                         .addRemoteInput(remoteInput)
                         .build();
-
+        ////////////////////////
 
         //**Building the whole notification**//
         NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -73,17 +69,8 @@ public class PostService extends Service {
                 .setContentIntent(pendingIntent)// Launch mainActivity on click
                 .addAction(replyAction);//New post reply action
 
-
-
-       /* Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("ShareNet Service")
-                .setContentText(input)
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentIntent(pendingIntent)
-                .addAction(R.drawable.ic_toggle_star_24,"Post",postPendingIntent)
-                .build();*/
-
-        startForeground(1, notification.build());
+        AppDatabase.postService = this;
+        startForeground(AppDatabase.getNotificationId(), notification.build());
         //do heavy work on a background thread
         //stopSelf();
         return START_NOT_STICKY;

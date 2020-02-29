@@ -104,7 +104,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if (TextUtils.isEmpty(mPasswordField.getText().toString())) {
             mPasswordField.setError("Required");
             result = false;
-        } else
+        } else if(mPasswordField.getText().toString().length()< 4) {
+            mPasswordField.setError("Password must be longer than 4");
+            result = false;
+        }
+        else
             mPasswordField.setError(null);
 
         return result;
